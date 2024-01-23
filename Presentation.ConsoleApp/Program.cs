@@ -1,10 +1,13 @@
 ﻿using Infrastructure.Contexts;
 using Infrastructure.Dtos;
+using Infrastructure.Entities;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+
 
 var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
 {
@@ -23,3 +26,6 @@ Console.Clear();
 
 var menuService = builder.Services.GetRequiredService<MenuService>();
 menuService.ShowMainMenu();
+
+
+

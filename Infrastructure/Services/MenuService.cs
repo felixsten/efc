@@ -1,4 +1,6 @@
 ﻿using Infrastructure.Dtos;
+using Infrastructure.Entities;
+using System.Diagnostics;
 
 
 namespace Infrastructure.Services;
@@ -16,6 +18,7 @@ public class MenuService(ProductService productService)
             Console.WriteLine();
             Console.WriteLine("1. Skapa ny produkt");
             Console.WriteLine("2. Visa alla produkter");
+            Console.WriteLine("3. Hitta en produkt");
 
             var option = Console.ReadLine();
 
@@ -26,6 +29,9 @@ public class MenuService(ProductService productService)
                     break;
                 case "2":
                     ViewAllProductsMenu();
+                    break;
+                case "3":
+                    SearchForProductMenu();
                     break;
                 default:
                     Console.WriteLine("Välj ett av alternativen.");
@@ -98,6 +104,27 @@ public class MenuService(ProductService productService)
             Console.WriteLine($"Kategori: {product.CategoryName}");
             Console.WriteLine("------------------------------------------------------------------");
             Console.WriteLine(" ");
+        }
+    }
+
+    public void SearchForProductMenu()
+    {
+        Console.Write("Ange Artikelnummer för info om produkt: ");
+        string articleNumberInput = Console.ReadLine()!;
+
+        var product = _productService.GetProductByPredicate(x => x.ArticleNumber == articleNumberInput);
+
+        if (product != null)
+        {
+            Debug.WriteLine($"Found product with ArticleNumber: {product.ArticleNumber}");
+            Console.WriteLine($"Artikelnummer: {product.ArticleNumber}, Titel: {product.Title}");
+            Console.WriteLine($"Beskrivning: {product.Description}, Specifikation: {product.SpecificationAsJson}");
+            Console.WriteLine($"Pris: {product.Price}");
+        }
+        else
+        {
+            Debug.WriteLine("Product not found");
+            Console.WriteLine("Product not found");
         }
     }
 

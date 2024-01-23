@@ -2,6 +2,7 @@
 using Infrastructure.Entities;
 using Infrastructure.Repositories;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Services;
 
@@ -63,5 +64,28 @@ public class ProductService(CategoryRepository categoryRepository, ProductReposi
 
         return products;
 
+    }
+
+    public Product GetProductByPredicate(Expression<Func<ProductEntity, bool>> predicate)
+    {
+        var productEntity = _productRepository.GetOne(predicate);
+
+        if (productEntity != null)
+        {
+            
+            var product = new Product
+            {
+                ArticleNumber = productEntity.ArticleNumber,
+                Title = productEntity.Title,
+                Description = productEntity.Description,
+                SpecificationAsJson = productEntity.SpecificationAsJson,
+                Price = productEntity.Price,
+                CategoryName = productEntity.Category?.CategoryName ?? string.Empty
+            };
+
+            return product;
+        }
+
+        return null!;
     }
 }

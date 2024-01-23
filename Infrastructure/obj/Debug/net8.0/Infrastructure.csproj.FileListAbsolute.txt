@@ -12,3 +12,4 @@ C:\Projects\efc\Infrastructure\obj\Debug\net8.0\refint\Infrastructure.dll
 C:\Projects\efc\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
 C:\Projects\efc\Infrastructure\obj\Debug\net8.0\Infrastructure.genruntimeconfig.cache
 C:\Projects\efc\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll
+C:\Projects\efc\Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json

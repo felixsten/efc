@@ -153,3 +153,5 @@ C:\Projects\efc\Presentation.ConsoleApp\obj\Debug\net8.0\refint\Presentation.Con
 C:\Projects\efc\Presentation.ConsoleApp\obj\Debug\net8.0\Presentation.ConsoleApp.pdb
 C:\Projects\efc\Presentation.ConsoleApp\obj\Debug\net8.0\Presentation.ConsoleApp.genruntimeconfig.cache
 C:\Projects\efc\Presentation.ConsoleApp\obj\Debug\net8.0\ref\Presentation.ConsoleApp.dll
+C:\Projects\efc\Presentation.ConsoleApp\obj\Debug\net8.0\Presentation.ConsoleApp.sourcelink.json
+C:\Projects\efc\Presentation.ConsoleApp\bin\Debug\net8.0\AutoMapper.dll

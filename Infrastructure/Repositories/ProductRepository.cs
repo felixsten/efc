@@ -25,9 +25,13 @@ public class ProductRepository(DataContext context) : BaseRepository<ProductEnti
     {
         try
         {
-            return _context.Products.Include(x => x.Category).FirstOrDefault(predicate, null!);
+            return _context.Products.Include(x => x.Category).AsEnumerable().FirstOrDefault(predicate.Compile())!;
         }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
+        }
+
         return null!;
     }
 }
