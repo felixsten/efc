@@ -13,6 +13,7 @@ var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
 {
     services.AddDbContext<DataContext>(x => x.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Projects\efc\Infrastructure\Data\local_database.mdf;Integrated Security=True;Connect Timeout=30;Encrypt=True"));
 
+    
     services.AddScoped<CategoryRepository>();
     services.AddScoped<ProductRepository>();
     services.AddScoped<ProductService>();

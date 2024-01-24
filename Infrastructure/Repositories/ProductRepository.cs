@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Contexts;
+using Infrastructure.Dtos;
 using Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -33,5 +34,15 @@ public class ProductRepository(DataContext context) : BaseRepository<ProductEnti
         }
 
         return null!;
+    }
+
+    public override ProductEntity Update(ProductEntity entity)
+    {
+        return base.Update(entity);
+    }
+
+    public bool DeleteProductByPredicate(Expression<Func<ProductEntity, bool>> predicate)
+    {
+        return base.Delete(predicate);
     }
 }

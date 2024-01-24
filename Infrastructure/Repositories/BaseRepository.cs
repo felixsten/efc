@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
+
 namespace Infrastructure.Repositories;
 
 public abstract class BaseRepository<TEntity> where TEntity : class
@@ -62,17 +63,30 @@ public abstract class BaseRepository<TEntity> where TEntity : class
     {
         try
         {
-            var entityToUpdate = _context.Set<TEntity>().Find(entity);
+            // Get the entity by its primary key
+            var entry = _context.Entry(entity);
+            var keyValues = entry.Metadata.FindPrimaryKey()!.Properties
+                .Select(p => entry.Property(p.Name).CurrentValue)
+                .ToArray();
+
+            var entityToUpdate = _context.Set<TEntity>().Find(keyValues);
+
             if (entityToUpdate != null)
             {
-                entityToUpdate = entity;
-                _context.Set<TEntity>().Update(entityToUpdate);
-                _context.SaveChanges(); 
-                
+                // Update the properties of the existing entity
+                _context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
+
+                // Save changes to the database
+                _context.SaveChanges();
+
                 return entityToUpdate;
             }
         }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
+        }
+
         return null!;
     }
 

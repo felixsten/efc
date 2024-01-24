@@ -10,6 +10,7 @@ public class ProductService(CategoryRepository categoryRepository, ProductReposi
 {
     private readonly CategoryRepository _categoryRepository = categoryRepository;
     private readonly ProductRepository _productRepository = productRepository;
+    
 
 
     public bool CreateProduct(Product product)
@@ -88,4 +89,51 @@ public class ProductService(CategoryRepository categoryRepository, ProductReposi
 
         return null!;
     }
+
+    public bool UpdateProduct(Product updatedProduct)
+    {
+        try
+        {
+            
+            var existingProduct = _productRepository.GetOne(x => x.ArticleNumber == updatedProduct.ArticleNumber);
+
+            if (existingProduct != null)
+            {
+                var categoryEntity = _categoryRepository.GetOne(x => x.CategoryName == updatedProduct.CategoryName);
+                categoryEntity ??= _categoryRepository.Create(new CategoryEntity { CategoryName = updatedProduct.CategoryName });
+
+                
+                existingProduct.Title = updatedProduct.Title;
+                existingProduct.Description = updatedProduct.Description;
+                existingProduct.SpecificationAsJson = updatedProduct.SpecificationAsJson;
+                existingProduct.Price = updatedProduct.Price;
+                existingProduct.CategoryId = categoryEntity.Id;
+
+                
+                _productRepository.Update(existingProduct);
+
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
+        }
+
+        return false;
+    }
+
+    public bool DeleteProductByPredicate(Expression<Func<ProductEntity, bool>> predicate)
+    {
+        try
+        {
+            return _productRepository.DeleteProductByPredicate(predicate);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ERROR :: " + ex.Message);
+            return false;
+        }
+    }
+
 }

@@ -19,6 +19,8 @@ public class MenuService(ProductService productService)
             Console.WriteLine("1. Skapa ny produkt");
             Console.WriteLine("2. Visa alla produkter");
             Console.WriteLine("3. Hitta en produkt");
+            Console.WriteLine("4. Uppdatera en produkt");
+            Console.WriteLine("5. Ta bort en produkt");
 
             var option = Console.ReadLine();
 
@@ -32,6 +34,12 @@ public class MenuService(ProductService productService)
                     break;
                 case "3":
                     SearchForProductMenu();
+                    break;
+                case "4":
+                    UpdateProductMenu();
+                    break;
+                case "5":
+                    DeleteProductMenu();
                     break;
                 default:
                     Console.WriteLine("Välj ett av alternativen.");
@@ -116,16 +124,89 @@ public class MenuService(ProductService productService)
 
         if (product != null)
         {
-            Debug.WriteLine($"Found product with ArticleNumber: {product.ArticleNumber}");
+            
             Console.WriteLine($"Artikelnummer: {product.ArticleNumber}, Titel: {product.Title}");
             Console.WriteLine($"Beskrivning: {product.Description}, Specifikation: {product.SpecificationAsJson}");
             Console.WriteLine($"Pris: {product.Price}");
         }
         else
         {
-            Debug.WriteLine("Product not found");
-            Console.WriteLine("Product not found");
+            
+            Console.WriteLine("Produkt kunde inte hittas");
         }
+    }
+
+    public void UpdateProductMenu()
+    {
+        Console.Write("Ange Artikelnummer för den produkt du vill uppdatera: ");
+        string articleNumberInput = Console.ReadLine()!;
+
+        var product = _productService.GetProductByPredicate(x => x.ArticleNumber == articleNumberInput);
+
+        if (product != null)
+        {
+            Console.WriteLine($"Hittad produkt med Artikelnummer: {product.ArticleNumber}");
+            Console.WriteLine($"Nuvarande information:");
+            Console.WriteLine($"Artikelnummer: {product.ArticleNumber}, Titel: {product.Title}");
+            Console.WriteLine($"Beskrivning: {product.Description}, Specifikation: {product.SpecificationAsJson}");
+            Console.WriteLine($"Pris: {product.Price}");
+            Console.WriteLine($"Kategori: {product.CategoryName}");
+
+            
+            var updatedProduct = new Product
+            {
+                ArticleNumber = product.ArticleNumber,
+                Title = product.Title,
+                Description = product.Description,
+                SpecificationAsJson = product.SpecificationAsJson,
+                Price = product.Price,
+                CategoryName = product.CategoryName
+            };
+
+            Console.WriteLine();
+            Console.WriteLine("Ange ny titel på produkten: ");
+            updatedProduct.Title = Console.ReadLine()!;
+            Console.WriteLine("Ange ny beskrivning på produkten: ");
+            updatedProduct.Description = Console.ReadLine()!;
+
+            Console.WriteLine("Ange ny pris på produkten: ");
+            string priceInput = Console.ReadLine()!;
+            if (decimal.TryParse(priceInput, out decimal updatedPrice))
+            {
+                updatedProduct.Price = updatedPrice;
+            }
+            else
+            {
+                Console.WriteLine("Priset kunde inte ändras på grund av fel inmatning");
+            }
+
+
+
+
+            var result = _productService.UpdateProduct(updatedProduct);
+
+            if (result)
+                Console.WriteLine($"Produkten {product.ArticleNumber}, {product.Title} uppdaterades.");
+            else
+                Console.WriteLine("Produkten kunde inte uppdateras");
+        }
+        else
+        {
+            Console.WriteLine("Produkten kunde inte hittas");
+        }
+    }
+
+    public void DeleteProductMenu()
+    {
+        Console.Write("Ange Artikelnummer av produkten du vill ta bort: ");
+        string articleNumberInput = Console.ReadLine()!;
+
+        var result = _productService.DeleteProductByPredicate(x => x.ArticleNumber == articleNumberInput);
+
+        if (result)
+            Console.WriteLine($"Produkt med Artikelnummer {articleNumberInput} har blivit borttagen.");
+        else
+            Console.WriteLine("Felaktigt artikelnummer, kunde inte ta bort produkten.");
     }
 
 }
