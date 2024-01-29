@@ -59,53 +59,22 @@ public abstract class BaseRepository<TEntity> where TEntity : class
     }
 
 
-    public virtual TEntity Update(TEntity entity)
+    public virtual TEntity Update(Expression<Func<TEntity, bool>> expression, TEntity entity)
     {
-        try
-        {
-            // Get the entity by its primary key
-            var entry = _context.Entry(entity);
-            var keyValues = entry.Metadata.FindPrimaryKey()!.Properties
-                .Select(p => entry.Property(p.Name).CurrentValue)
-                .ToArray();
+        var entityToUpdate = _context.Set<TEntity>().FirstOrDefault(expression);
+        _context.Entry(entityToUpdate!).CurrentValues.SetValues(entity);
+        _context.SaveChanges();
 
-            var entityToUpdate = _context.Set<TEntity>().Find(keyValues);
-
-            if (entityToUpdate != null)
-            {
-                // Update the properties of the existing entity
-                _context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
-
-                // Save changes to the database
-                _context.SaveChanges();
-
-                return entityToUpdate;
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("ERROR :: " + ex.Message);
-        }
-
-        return null!;
+        return entityToUpdate!;
     }
 
 
-    public virtual bool Delete(Expression<Func<TEntity, bool>> predicate)
+    public virtual void Delete(Expression<Func<TEntity, bool>> expression)
     {
-        try
-        {
-            var entity = _context.Set<TEntity>().FirstOrDefault(predicate);
-            if (entity != null)
-            {
-                _context.Set<TEntity>().Remove(entity);
-                _context.SaveChanges();
+        var entity = _context.Set<TEntity>().FirstOrDefault(expression);
+        _context.Remove(entity!);
+        _context.SaveChanges();
 
-                return true;
-            }
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
-        return false;
     }
 
 

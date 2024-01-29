@@ -12,37 +12,7 @@ public class ProductRepository(DataContext context) : BaseRepository<ProductEnti
 {
     private readonly DataContext _context = context;
 
-    public override IEnumerable<ProductEntity> GetAll()
-    {
-        try
-        {
-            return _context.Products.Include(x => x.Category).ToList();
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
-        return null!;
-    }
+    
 
-    public override ProductEntity GetOne(Expression<Func<ProductEntity, bool>> predicate)
-    {
-        try
-        {
-            return _context.Products.Include(x => x.Category).AsEnumerable().FirstOrDefault(predicate.Compile())!;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("ERROR :: " + ex.Message);
-        }
 
-        return null!;
-    }
-
-    public override ProductEntity Update(ProductEntity entity)
-    {
-        return base.Update(entity);
-    }
-
-    public bool DeleteProductByPredicate(Expression<Func<ProductEntity, bool>> predicate)
-    {
-        return base.Delete(predicate);
-    }
 }

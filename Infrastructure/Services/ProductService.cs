@@ -1,4 +1,4 @@
-﻿using Infrastructure.Dtos;
+﻿
 using Infrastructure.Entities;
 using Infrastructure.Repositories;
 using System.Diagnostics;
@@ -6,134 +6,67 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.Services;
 
-public class ProductService(CategoryRepository categoryRepository, ProductRepository productRepository)
+public class ProductService
 {
-    private readonly CategoryRepository _categoryRepository = categoryRepository;
-    private readonly ProductRepository _productRepository = productRepository;
-    
+    private readonly ProductRepository _productRepository;
+    private readonly CategoryService _categoryService;
 
-
-    public bool CreateProduct(Product product)
+    public ProductService(ProductRepository productRepository, CategoryService categoryService)
     {
-        try
-        {
-            if (!_productRepository.Exists(x => x.ArticleNumber == product.ArticleNumber))
-            {
-                var categoryEntity = _categoryRepository.GetOne(x => x.CategoryName == product.CategoryName);
-                categoryEntity ??= _categoryRepository.Create(new CategoryEntity { CategoryName = product.CategoryName });
-
-                var productEntity = new ProductEntity
-                {
-                    ArticleNumber = product.ArticleNumber,
-                    Title = product.Title,
-                    Description = product.Description,
-                    SpecificationAsJson = product.SpecificationAsJson,
-                    Price = product.Price,
-                    CategoryId = categoryEntity.Id
-                };
-
-                var result = _productRepository.Create(productEntity);
-                if (result != null)
-                    return true;
-            }
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
-
-        return false;
+        _productRepository = productRepository;
+        _categoryService = categoryService;
     }
 
-    public IEnumerable<Product> GetAllProducts()
+
+    public ProductEntity CreateProduct(string title, decimal price, string categoryName)
     {
-        var products = new List<Product>();
+        var categoryEntity = _categoryService.CreateCategory(categoryName);
 
-        try
+        var productEntity = new ProductEntity
         {
-            var result = _productRepository.GetAll();
+            Title = title,
+            Price = price,
+            CategoryId = categoryEntity.Id,
+        };
 
-            foreach (var item in result)
-                products.Add(new Product
-                {
-                    ArticleNumber = item.ArticleNumber,
-                    Title = item.Title,
-                    Description = item.Description,
-                    SpecificationAsJson = item.SpecificationAsJson,
-                    Price = item.Price,
-                    CategoryName = item.Category.CategoryName
-                });
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
+        productEntity = _productRepository.Create(productEntity);
+        return productEntity;
 
+    }
+
+
+
+
+    public ProductEntity GetProductById(int id)
+    {
+        var productEntity = _productRepository.GetOne(x => x.Id == id);
+        return productEntity;
+    }
+
+
+    public IEnumerable<ProductEntity> GetProducts()
+    {
+        var products = _productRepository.GetAll();
         return products;
-
     }
 
-    public Product GetProductByPredicate(Expression<Func<ProductEntity, bool>> predicate)
+    public ProductEntity UpdateProduct(ProductEntity productEntity)
     {
-        var productEntity = _productRepository.GetOne(predicate);
-
-        if (productEntity != null)
-        {
-            
-            var product = new Product
-            {
-                ArticleNumber = productEntity.ArticleNumber,
-                Title = productEntity.Title,
-                Description = productEntity.Description,
-                SpecificationAsJson = productEntity.SpecificationAsJson,
-                Price = productEntity.Price,
-                CategoryName = productEntity.Category?.CategoryName ?? string.Empty
-            };
-
-            return product;
-        }
-
-        return null!;
+        var updatedProductEntity = _productRepository.Update(x => x.Id == productEntity.Id, productEntity);
+        return updatedProductEntity;
     }
 
-    public bool UpdateProduct(Product updatedProduct)
+
+    public void DeleteProduct(int id)
     {
-        try
-        {
-            
-            var existingProduct = _productRepository.GetOne(x => x.ArticleNumber == updatedProduct.ArticleNumber);
-
-            if (existingProduct != null)
-            {
-                var categoryEntity = _categoryRepository.GetOne(x => x.CategoryName == updatedProduct.CategoryName);
-                categoryEntity ??= _categoryRepository.Create(new CategoryEntity { CategoryName = updatedProduct.CategoryName });
-
-                
-                existingProduct.Title = updatedProduct.Title;
-                existingProduct.Description = updatedProduct.Description;
-                existingProduct.SpecificationAsJson = updatedProduct.SpecificationAsJson;
-                existingProduct.Price = updatedProduct.Price;
-                existingProduct.CategoryId = categoryEntity.Id;
-
-                
-                _productRepository.Update(existingProduct);
-
-                return true;
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("ERROR :: " + ex.Message);
-        }
-
-        return false;
-    }
-
-    public bool DeleteProductByPredicate(Expression<Func<ProductEntity, bool>> predicate)
-    {
-        try
-        {
-            return _productRepository.DeleteProductByPredicate(predicate);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("ERROR :: " + ex.Message);
-            return false;
-        }
+        _productRepository.Delete(x => x.Id == id);
     }
 
 }
+
+
+
+
+
+
+
