@@ -31,31 +31,14 @@ public abstract class BaseRepository<TEntity> where TEntity : class
 
     public virtual IEnumerable<TEntity> GetAll()
     {
-        try
-        {
-            var result = _context.Set<TEntity>().ToList();
-            if (result != null)
-            {
-                return result;
-            }
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
-        return null!;
+        return _context.Set<TEntity>().ToList();
     }
 
 
-    public virtual TEntity GetOne(Expression<Func<TEntity, bool>> predicate)
+    public virtual TEntity GetOne(Expression<Func<TEntity, bool>> expression)
     {
-        try
-        {
-            var result = _context.Set<TEntity>().FirstOrDefault(predicate);
-            if (result != null)
-            {
-                return result;
-            }
-        }
-        catch (Exception ex) { Debug.WriteLine("ERROR :: " + ex.Message); }
-        return null!;
+        var entity = _context.Set<TEntity>().FirstOrDefault(expression);
+        return entity!;
     }
 
 

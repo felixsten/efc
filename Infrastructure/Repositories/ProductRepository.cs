@@ -12,7 +12,14 @@ public class ProductRepository(DataContext context) : BaseRepository<ProductEnti
 {
     private readonly DataContext _context = context;
 
-    
+    public override IEnumerable<ProductEntity> GetAll()
+    {
+        return _context.Products.Include(i => i.Category).ToList();
+    }
 
-
+    public override ProductEntity GetOne(Expression<Func<ProductEntity, bool>> expression)
+    {
+        var entity = _context.Products.Include(i => i.Category).FirstOrDefault(expression);
+        return entity!;
+    }
 }

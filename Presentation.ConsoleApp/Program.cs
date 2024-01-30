@@ -14,9 +14,17 @@ var builder = Host.CreateDefaultBuilder().ConfigureServices(services =>
 
     
     services.AddScoped<CategoryRepository>();
+    services.AddScoped<CategoryService>();
     services.AddScoped<ProductRepository>();
     services.AddScoped<ProductService>();
-    services.AddScoped<MenuService>();
+    services.AddScoped<AddressRepository>();
+    services.AddScoped<AddressService>();
+    services.AddScoped<CustomerRepository>();
+    services.AddScoped<CustomerService>();
+    services.AddScoped<RoleRepository>();
+    services.AddScoped<RoleService>();
+
+    services.AddSingleton<MenuService>();
 
 }).Build();
 
