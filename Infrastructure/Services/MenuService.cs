@@ -29,7 +29,7 @@ public class MenuService
             Console.WriteLine("4. Ta bort en produkt");
             Console.WriteLine("5. Skapa ny kund");
             Console.WriteLine("6. Visa alla kunder");
-            Console.WriteLine("7. Uppdatera kund)");
+            Console.WriteLine("7. Uppdatera kund");
             Console.WriteLine("8. Ta bort kund");
 
             var option = Console.ReadLine();
@@ -113,7 +113,7 @@ public class MenuService
     public void UpdateProductMenu()
     {
         Console.Clear();
-        Console.Write("Ange produkt ID");
+        Console.Write("Ange produkt ID: ");
         var id = int.Parse(Console.ReadLine()!);
         var product = _productService.GetProductById(id);
 
@@ -140,7 +140,7 @@ public class MenuService
     public void DeleteProductMenu()
     {
         Console.Clear();
-        Console.Write("Ange produkt ID");
+        Console.Write("Ange produkt ID: ");
         var id = int.Parse(Console.ReadLine()!);
         var product = _productService.GetProductById(id);
 
@@ -215,7 +215,7 @@ public class MenuService
     public void UpdateCustomerMenu()
     {
         Console.Clear();
-        Console.Write("Ange kundens email");
+        Console.Write("Ange kundens email: ");
         var email = Console.ReadLine()!;
 
         var customer = _customerService.GetCustomerByEmail(email);
@@ -245,7 +245,7 @@ public class MenuService
     public void DeleteCustomerMenu()
     {
         Console.Clear();
-        Console.Write("Ange kundens email");
+        Console.Write("Ange kundens email: ");
         var email = Console.ReadLine()!;
 
         var customer = _customerService.GetCustomerByEmail(email);
